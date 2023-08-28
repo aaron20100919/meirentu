@@ -48,7 +48,7 @@ for page in range(1, 100):
     print('page%s' % page)
 
     main_url = f'https://meirentu.top/index/{page}.html'
-    path = './'
+    path = 'D:/zzz/setu/'
 
     headers = {
         'authority': 'cdn2.mmdb.cc',
@@ -71,16 +71,16 @@ for page in range(1, 100):
                       'Safari/537.36 Edg/111.0.1661.41',
     }
 
-    main_get = requests.get(main_url, headers=headers)
-    main_get.raise_for_status()
-
-    main_html = main_get.content.decode('utf-8')
-
-    print('init ok')
-
-    urls = ['https://meirentu.top' + url for url in re.findall(r'<a href="(/pic/\d+?).html"', main_html)]
-
     try:
+        main_get = requests.get(main_url, headers=headers)
+        main_get.raise_for_status()
+
+        main_html = main_get.content.decode('utf-8')
+
+        print('init ok')
+
+        urls = ['https://meirentu.top' + url for url in re.findall(r'<a href="(/pic/\d+?).html"', main_html)]
+
         for _url in urls:
             try:
                 for i in range(1, 100):
@@ -115,7 +115,7 @@ for page in range(1, 100):
                                                 cnt = number + 1
                                     with open('%s/%s.jpg' % (path, cnt), 'wb') as f:
                                         f.write(pic_get.content)
-                                        print('%s/%s.jpg id ok' % (path, cnt))
+                                        print('%s/%s.jpg is ok' % (path, cnt))
                                         cnt += 1
                                         # raise KeyboardInterrupt
                                         break
@@ -130,7 +130,7 @@ for page in range(1, 100):
                                                 cnt = number + 1
                                     with open('%s/small_%s.jpg' % (path, cnt), 'wb') as f:
                                         f.write(pic_get.content)
-                                        print('%s/small_%s.jpg id ok' % (path, cnt))
+                                        print('%s/small_%s.jpg is ok' % (path, cnt))
                                         cnt += 1
                                         # raise KeyboardInterrupt
                                         break

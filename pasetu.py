@@ -82,6 +82,7 @@ for page in range(1, 100):
         urls = ['https://meirentu.top' + url for url in re.findall(r'<a href="(/pic/\d+?).html"', main_html)]
 
         for _url in urls:
+            delete_duplicates(find_duplicate_images(path))
             try:
                 for i in range(1, 100):
                     url = '%s-%d.html' % (_url, i)

@@ -48,7 +48,7 @@ for page in range(1, 100):
     print('page%s' % page)
 
     main_url = f'https://meirentu.top/index/{page}.html'
-    path = '。'
+    path = './'
 
     headers = {
         'authority': 'cdn2.mmdb.cc',

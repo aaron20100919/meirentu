@@ -4,9 +4,8 @@ from requests.packages import urllib3
 urllib3.disable_warnings()
 warnings.filterwarnings("ignore")
 
-# 自己指定 url 和 path
 main_url = 'https://meirentu.top/model/%E5%B9%BC%E5%B9%BC.html'
-path = './'
+path = 'D:/zzz/setu/'
 
 target_pattern = r'^(\d+)\.jpg$'
 
@@ -16,9 +15,7 @@ for filename in os.listdir(path):
     if match:
         number = int(match.group(1))
         if number > cnt:
-            cnt = number
-cnt += 1
-
+            cnt = number + 1
 
 headers = {
     'authority': 'cdn2.mmdb.cc',
@@ -39,16 +36,9 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.41',
 }
 
-while True:
-    try:
-        main_get = requests.get(main_url, headers=headers)
-        main_get.raise_for_status()
-    except Exception as e:
-        print(e)
-        pass
-    else:
-        time.sleep(1)
-        break
+main_get = requests.get(main_url, headers=headers)
+main_get.raise_for_status()
+
 main_html = main_get.content.decode('utf-8')
 
 print('init ok')
@@ -59,16 +49,8 @@ try:
     for _url in urls:
         for i in range(1, 100):
             url = '%s-%d.html' % (_url, i)
-            while True:
-                try:
-                    html_get = requests.get(url, headers=headers)
-                    html_get.raise_for_status()
-                except Exception as e:
-                    print(e)
-                    pass
-                else:
-                    time.sleep(1)
-                    break
+            html_get = requests.get(url, headers=headers)
+            html_get.raise_for_status()
 
             html = html_get.content.decode('utf-8')
             pics_urls = re.findall(r'src="(https://cdn\d+?.mmdb.cc/file/\d+?/\d+?/\d+?.jpg)"', html)
@@ -94,8 +76,6 @@ try:
                         print('%s/%s.jpg id ok' % (path, cnt))
                         cnt += 1
                         # raise KeyboardInterrupt
-
-
 
 except KeyboardInterrupt:
     pass

@@ -45,10 +45,10 @@ def delete_duplicates(duplicates):
 
 
 for page in range(1, 100):
-    print('page%s' % page)
+    print('page %s' % page)
 
     main_url = f'https://meirentu.top/index/{page}.html'
-    path = 'D:/zzz/setu/'
+    path = './'
 
     headers = {
         'authority': 'cdn2.mmdb.cc',

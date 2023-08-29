@@ -94,7 +94,7 @@ headers = {
 }
 
 directory = './'
-log_file = './'
+log_file = './log.txt'
 
 
 def write_log(log):
@@ -106,12 +106,12 @@ def read_log():
     if not os.path.exists(log_file):
         return None
     with open(log_file, 'r') as file:
-        return file.readlines()
+        return file.read()
 
 
 log_lines = read_log()
 if log_lines:
-    last_page = int(log_lines[-1].split(':')[1])
+    last_page = int(re.findall(r'page:(\d+)', log_lines)[-1])
 else:
     last_page = 0
 

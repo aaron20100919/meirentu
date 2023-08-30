@@ -9,7 +9,7 @@ urllib3.disable_warnings()
 warnings.filterwarnings("ignore")
 
 
-def calculate_hash(filepath, block_size=2048):
+def calculate_hash(filepath, block_size=8092):
     hash_obj = sha256()
     with open(filepath, "rb") as file:
         while True:
@@ -44,7 +44,7 @@ def delete_duplicates(duplicates):
 
 
 def download_image(image_url, _directory):
-    for tries in range(5):
+    for tries in range(3):
         try:
             image_get = requests.get(image_url, headers=headers)
             image_get.raise_for_status()
@@ -54,9 +54,9 @@ def download_image(image_url, _directory):
         else:
             if len(image_get.content) > 10000:
                 cnt = get_next_file_number(_directory, r'(\d+)\.jpg$')
-                with open('%s/%s.jpg' % (_directory, cnt), 'wb') as file:
+                with open(r'%s\%s.jpg' % (_directory, cnt), 'wb') as file:
                     file.write(image_get.content)
-                    print('%s/%s.jpg is ok' % (_directory, cnt))
+                    print(r'%s\%s.jpg is ok' % (_directory, cnt))
                     return True
     return False
 
@@ -93,8 +93,8 @@ headers = {
                   'Safari/537.36 Edg/111.0.1661.41',
 }
 
-directory = './'
-log_file = './log.txt'
+directory = '.\\'
+log_file = '.\\'
 
 
 def write_log(log):
@@ -111,13 +111,11 @@ def read_log():
 
 log_lines = read_log()
 if log_lines:
-    last_page = int(re.findall(r'page:(\d+)', log_lines)[-1])
+    last_page = int(re.findall(r'page:(\d+)', log_lines)[-1]) + 1
 else:
-    last_page = 0
+    last_page = 1
 
 for page in range(last_page, 100):
-    print('page %s' % page)
-    write_log(f'page:{page}')
 
     main_url = f'https://meirentu.top/hots/{page}.html'
 
@@ -127,33 +125,46 @@ for page in range(last_page, 100):
 
         main_html = main_get.content.decode('utf-8')
 
-        print('init ok')
+        print('page %s' % page)
+        write_log(f'page:{page}')
 
         urls = ['https://meirentu.top' + url for url in re.findall(r'<a href="(/pic/\d+?).html"', main_html)]
 
+        urls_len = len(urls)
+
         for _url in urls:
+            urls_len -= 1
+
             delete_duplicates(find_duplicate_images(directory))
             try:
                 for i in range(1, 100):
                     url = '%s-%d.html' % (_url, i)
                     write_log(f'url:{url}')
+                    print('getting')
                     html_get = requests.get(url, headers=headers)
                     html_get.raise_for_status()
 
                     html = html_get.content.decode('utf-8')
+                    print('re')
                     pics_urls = re.findall(r'<img alt=".+?" src="(https://cdn\d+?.mmdb.cc/file/\d+?/\d+?/\d+?.jpg)"',
                                            html)
 
                     # print(url, pics_urls)
                     print('%s get ok' % url)
 
+                    download_num = 0
+
                     for pic_url in pics_urls:
-                        download_image(pic_url, directory)
+                        download_num += int(download_image(pic_url, directory))
+
+                    print('%s of %s downloads ok' % (download_num, len(pics_urls)))
 
             except Exception as e:
-                delete_duplicates(find_duplicate_images(directory))
                 print(e)
+                print(f'{len(urls) - urls_len} of page {page} downloads ok')
                 pass
+
+        print(f'{urls_len} of {len(urls)} pics ok')
 
     except KeyboardInterrupt:
         pass
